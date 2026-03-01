@@ -2678,8 +2678,7 @@ a <b></b> tag pair.
 
 Here's the same document parsed as XML (running this requires that you
 have lxml installed). Note that the standalone <b/> tag is left alone, and
-that the document is given an XML declaration instead of being put
-into an <html> tag.::
+that the document is given an XML declaration::
 
  print(BeautifulSoup("<a><b/></a>", "xml"))
  # <?xml version="1.0" encoding="utf-8"?>
