@@ -2994,23 +2994,35 @@ the original document each :py:class:`Tag` was found. You can access this
 information as ``Tag.sourceline`` (line number) and ``Tag.sourcepos``
 (position of the start tag within a line)::
 
- markup = "<p\n>Paragraph 1</p>\n    <p>Paragraph 2</p>"
+Note that the two parsers mean slightly different things by
+``sourcepos``. For html.parser, ``sourcepos`` points to the first character of the
+opening tag::
+ 
+ markup = '<p class="1"\n>Paragraph 1</p>\n    <p class="2">Paragraph 2</p>'
+ print(markup)
+ # Line 1: <p class="1"
+ # Line 2: >Paragraph 1</p>
+ # Line 3:     <p class="2">Paragraph 2</p>
+ 
  soup = BeautifulSoup(markup, 'html.parser')
  for tag in soup.find_all('p'):
      print(repr((tag.sourceline, tag.sourcepos, tag.string)))
- # (1, 0, 'Paragraph 1')
- # (3, 4, 'Paragraph 2')
+ # (1, 0, 'Paragraph 1') # The < just before p class="1"
+ # (3, 4, 'Paragraph 2') # The < just before p class="2"
 
-Note that the two parsers mean slightly different things by
-``sourceline`` and ``sourcepos``. For html.parser, these numbers
-represent the position of the initial less-than sign. For html5lib,
-these numbers represent the position of the final greater-than sign::
+For html5lib, ``sourcepos`` points to the *final* character of the
+opening tag::
+
+ print(markup)
+ # Line 1: <p class="1"
+ # Line 2: >Paragraph 1</p>
+ # Line 3:     <p class="2">Paragraph 2</p>
 
  soup = BeautifulSoup(markup, 'html5lib')
  for tag in soup.find_all('p'):
      print(repr((tag.sourceline, tag.sourcepos, tag.string)))
- # (2, 0, 'Paragraph 1')
- # (3, 6, 'Paragraph 2')
+ # (2, 0, 'Paragraph 1') # The > just before Paragraph 1
+ # (3, 16, 'Paragraph 2') # The > just before Paragraph 2
 
 You can shut off this feature by passing ``store_line_numbers=False``
 into the :py:class:`BeautifulSoup` constructor::
